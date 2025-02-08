@@ -154,8 +154,8 @@ Now require userModel in controllers (Routes we will create but its logic we wil
 So for that I will create a folder as controllers inside backend folder and create a file as user.controller.js-
 Now require userModel in user.controller.js file
 
-Step 4 : Creating API's for user
---------------------------------
+Step 4 : Creating API's for user registration, login, and logout
+----------------------------------------------------------------
 
 1. Register API for register a user
 create a routes folder inside backend folder and inside that create a file as user.routes.js
@@ -275,6 +275,63 @@ user.route.js, user.controller.js, user.service.js and write a prompt
 
 PROMPT TO CREATE DOCS FOR API -
 Create a readme.md file to docs the /users/register endpoint with description and status code , Add example of response, also write how the data required in the endpoint. create it in the backend folder.
+
+2. Login API to login a user
+
+user.route.js file -
+
+router.post('/login', [
+    body('email').isEmail().withMessage('Invalid Email'),
+    body('password').isLength({min: 6}).withMessage('Password must be atleast 6 characters long')
+],
+userController.loginUser
+)
+
+user.controller.js -
+
+module.exports.loginUser = async ( req, res, next ) => {
+
+    const errors = validationResult(req);
+
+    if(!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, password } = req.body;
+
+    console.log(req.body);
+    
+    const user = await userModel.findOne({ email }).select('+password');
+
+    if(!user) {
+        return res.status(404).json({ message: 'Invalid email or password' });
+    }
+    
+    const isMatch = await user.comparePassword(password);
+
+    if(!isMatch) {
+        return res.status(404).json({ message: 'Invalid email or password' });
+    }
+
+    const token = user.generateAuthToken();
+
+    res.status(200).json({ token, user });
+    
+}
+
+Checking on postman - http://localhost:4000/users/login
+
+HTTP Method - post
+Body - raw
+JSON -
+{
+    "email": "test@gmail.com",
+    "password": "test123"
+}
+
+Prepare a login api docs.
+
+
 
 
 
