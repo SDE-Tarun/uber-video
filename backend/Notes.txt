@@ -1,0 +1,65 @@
+A backend folder is created inside uber-video folder.
+Inside that folder , Open terminal and run npm init -y command to create package.json file.
+Then run npm install express command to install package.
+Then create a app.js file inside which -
+
+const express = require('express');
+
+const app = express();
+
+app.get('/', ( req, res )=>{
+    res.send("Hello World");
+})
+
+module.exports = app;
+
+Create a server.js file inside which we will create a http server
+Now I want to listen my server on a port and for that I will install dotnev package using npm install dotenv command.
+And require it in app.js file and also configure it using dotenv.config() so that to use it in server.js file to get the port number from .env file.
+Also install cors using npm i cors and use it in my app.js file to allow cross origin request.
+Now create a server variable which will use my port number from env file.
+
+app.js file -
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const cors = require('cors');
+
+app.use(cors());
+
+server.js file -
+
+const http = require('http');
+
+const app = require('./app');
+
+const port = process.env.PORT || 3000;
+
+const server = http.createServer(app);
+
+server.listen(port, ()=> {
+    console.log(`Server is running on port : http://localhost:${port}`);
+})
+
+Finally inside package.json file -
+ "main": "server.js",
+
+ This is the entry file
+
+ Run command for backend : npx nodemon
+
+ If you add scripts : 
+
+ "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js", - npm run start
+    "dev": "nodemon server.js" - npm run dev
+  },
+
+  
+
+
+
+
+
