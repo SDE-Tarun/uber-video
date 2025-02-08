@@ -1,4 +1,5 @@
-Step 1: Project Initialization and Basic Server Setup -
+Step 1 : Project Initialization and Basic Server Setup -
+--------------------------------------------------------
 
 A backend folder is created inside uber-video folder.
 Inside that folder , Open terminal and run npm init -y command to create package.json file.
@@ -59,7 +60,8 @@ Finally inside package.json file -
     "dev": "nodemon server.js" - npm run dev
   },
 
-Step 2: Database setup using mongoose
+Step 2 : Database setup using mongoose
+---------------------------------------
 
 Install mongoose package and connect it with database
 Create a folder inside backend folder as db and inside db folder create a file db.js that has a function to create my databse with my application.
@@ -82,7 +84,8 @@ const connectToDb = require('./db/db');
 
 connectToDb();
 
-Step 3: UserModel create
+Step 3 : UserModel create
+---------------------------
 
 Require momgoose and create a userSchema with fullname, email, password and socketId.
 
@@ -150,6 +153,123 @@ module.exports = userModel;
 Now require userModel in controllers (Routes we will create but its logic we will write in controller).
 So for that I will create a folder as controllers inside backend folder and create a file as user.controller.js-
 Now require userModel in user.controller.js file
+
+Step 4 : Creating API's for user
+--------------------------------
+
+1. Register API for register a user
+create a routes folder inside backend folder and inside that create a file as user.routes.js
+Inside that user.routes.js file -
+
+const express = require('express');
+
+const router = express.Router();
+
+module.exports = router;
+
+Scenerio : When I register a user i get some data from frontend so i need to validate that data.
+so for that i will use a package called express-validator
+
+user.routes.js file -
+
+const { body } = require('express-validator');
+
+Create a route then -
+
+router.post('/register', [
+    body('email').isEmail().withMessage('Invalid Email'),
+    body('fullname.firstname').isLength({min: 3}).withMessage('First name must be atleast 3 characters long'),
+    body('password').isLength({min: 6}).withMessage('Password must be atleast 6 characters long')
+],
+userController.registerUser
+)
+
+Now by going on this register route whatever data i will get I need to validate it using express validator
+so for that i will create a function in user.controller.js file.
+so require it first here const userController = require('./user.controller');
+
+module.exports.registerUser = async ( req, res, next) => {
+    
+}
+
+Now I am passing this registerUser as a controller function to register route.
+Now I am creating a service to interact with my database>
+Inside backend folder create a services folder inside it create a file as user.service.js file
+
+user.service.js file - Just to create a user
+
+const userModel = require('../models/user.model');
+
+const userModel = require('../models/user.model');
+
+module.exports.createUser = async ({
+    firstname, lastname, email, password
+}) => {
+    if(!firstname || !email || !password) {
+        throw new Error('All fields are required');
+    }
+    const user = userModel.create({
+        fullname: {
+            firstname,
+            lastname
+        },
+        email,
+        password
+    })
+    return user;
+}
+
+To perform action on particular while validating user in controller function -
+For that we will use Validation Result in userController.js file -
+const { validationResult } = require('express-validator');
+const errors = validationResult(req);
+those errors we will find inside validationResult and pass req also so that you will get errors in this req while validating user on route.
+
+ if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+To send this validation error from backend to frontend i will have it in errors.array
+
+const { fullname, email, password } = req.body;
+
+    const hashedPassword = await userModel.hashPassword(password);
+
+    const user = await userService.createUser({
+        firstname: fullname.firstname
+        lastname: fullname.lastname
+        email,
+        password: hashedPassword
+    })
+    
+   const token = user.generateToken();
+
+   res.status(201).json({token,user});
+
+   Now in frontend side we will have to send this token to backend in header
+ so that we can authenticate user.
+
+ now go to app.js file require and use this route
+
+ const userRoutes = require('./routes/user.routes');
+
+ app.use('/users', userRoutes);
+
+ Testing -
+
+ Go to postman and http://localhost:4000/users/register
+ body-raw-json : {"fullname":{
+    "firstname": "test_Tarun",
+    "Lastname": "test_Kumar"
+},
+"email":"test@test.com",
+"password":"test_password"
+}
+
+Now you will get response with token and user details.
+
+
+  
 
 
 
