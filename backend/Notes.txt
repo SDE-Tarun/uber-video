@@ -1,3 +1,5 @@
+Step 1: Project Initialization and Basic Server Setup -
+
 A backend folder is created inside uber-video folder.
 Inside that folder , Open terminal and run npm init -y command to create package.json file.
 Then run npm install express command to install package.
@@ -57,7 +59,7 @@ Finally inside package.json file -
     "dev": "nodemon server.js" - npm run dev
   },
 
-  
+
 
 
 
