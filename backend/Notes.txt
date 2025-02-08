@@ -84,7 +84,72 @@ connectToDb();
 
 Step 3: UserModel create
 
+Require momgoose and create a userSchema with fullname, email, password and socketId.
 
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+    fullname:{
+        firstname:{
+            type:String,
+            required:true,
+            minlength: [3, "First name must be atleast 3 characters long"]
+        },
+        lastname:{
+            type:String,
+            minlength: [3, "Last name must be atleast 3 characters long"]
+        },
+    },
+    email:{
+        type:String,
+        required:true,
+        unique:true,
+        minlength: [5, "Email must be atleast 5 characters long"]
+    },
+    password:{
+        type:String,
+        required:true
+    },
+    // for live tracking so user can track live location of driver or captain.
+    socketId:{
+        type:String
+    }
+})
+
+Also add some methods here like for hashing password and comparing password for that I will use a package called bcrypt.
+For generating token and basic authentication, i will install and use a package called jsonwebtoken.
+Installing commands -
+npm i bcrypt jsonwebtoken
+After installing require it in user.model.js file -
+const bcrypt = require('bcrypt');
+
+const jwt = require('jsonwebtoken');
+
+Now i will add some methods in userSchema -
+Method 1 : To generate token -
+userSchema.methods.generateAuthToken = function() {
+    const token = jwt.sign({ _id: this._id }, process.env.SECRET_KEY);
+    return token;
+}
+
+Method 2 : To hash password -
+userSchema.statics.hashPassword = async function (password) {
+    return await bcrypt.hashPassword(password, 10);
+}
+
+Method 3 : To Compare password _id
+userSchema.methods.comparePassword = async function (passowrd){
+    return await bcrypt.compare(passowrd, this.password);
+}
+
+And finally i will create my userModel here by -
+const userModel = mongoose.model("user", userSchema);
+
+module.exports = userModel;
+
+Now require userModel in controllers (Routes we will create but its logic we will write in controller).
+So for that I will create a folder as controllers inside backend folder and create a file as user.controller.js-
+Now require userModel in user.controller.js file
 
 
 
