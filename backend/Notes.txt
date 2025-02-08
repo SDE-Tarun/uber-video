@@ -268,6 +268,17 @@ const { fullname, email, password } = req.body;
 
 Now you will get response with token and user details.
 
+Step 5 : API documentation -
+
+So, send three files to chatgpt 
+user.route.js, user.controller.js, user.service.js and write a prompt
+
+PROMPT TO CREATE DOCS FOR API -
+Create a readme.md file to docs the /users/register endpoint with description and status code , Add example of response, also write how the data required in the endpoint. create it in the backend folder.
+
+
+
+
 
   
 
