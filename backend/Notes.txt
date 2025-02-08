@@ -59,6 +59,35 @@ Finally inside package.json file -
     "dev": "nodemon server.js" - npm run dev
   },
 
+Step 2: Database setup using mongoose
+
+Install mongoose package and connect it with database
+Create a folder inside backend folder as db and inside db folder create a file db.js that has a function to create my databse with my application.
+const mongoose = require('mongoose');
+
+function connectToDb() {
+    mongoose.connect(process.env.DB_CONNECT)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => {
+        console.error('Error connecting to MongoDB:', err);
+        process.exit(1); // Exit process if connection fails
+    });
+}
+
+module.exports = connectToDb;
+
+After that in app.js file require db file and call that connect to db function -
+
+const connectToDb = require('./db/db');
+
+connectToDb();
+
+Step 3: UserModel create
+
+
+
+
+
 
 
 
