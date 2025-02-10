@@ -25,7 +25,7 @@ module.exports.registerUser = async ( req, res, next) => {
         password: hashedPassword
     })
 
-    console.log(user);
+    // console.log(user);
     
     
    const token = user.generateAuthToken();
@@ -44,7 +44,7 @@ module.exports.loginUser = async ( req, res, next ) => {
 
     const { email, password } = req.body;
 
-    console.log(req.body);
+    // console.log(req.body);
     
     const user = await userModel.findOne({ email }).select('+password');
 

@@ -331,6 +331,84 @@ JSON -
 
 Prepare a login api docs.
 
+3. Profile API for seeing a user Profile
+
+First i will create a profile route 
+router.get('/profile', userController.getUserProfile);
+
+create controller function for getting user profile
+
+
+module.exports.getUserProfile = async ( req, res, next ) => {
+    // Check user logic then return user profile
+    res.status(200).json(req.user);
+}
+
+To check a authorized user , I will create a middlewares folder and inside it i will have a auth.middleware.js file
+const userModel = require('../models/user.model');
+
+const bcrypt = require('bcrypt');
+
+const jwt = require('jsonwebtoken');
+
+module.exports.authUser = async (req, res, next) => {
+    
+}
+
+Token verification logic will be inside this middleware
+
+Token mainly we get from two places -
+1. header - const token = req.headers.authorization
+2. cookies - const token = req.cookies.token
+
+In authorization part, 
+I have to split and then will get token - req.headers.authorization.split(' ')[ 1 ];
+after that I have to decode the token
+
+If token doesnt exist in header or cookies, i will send a message as Unauthorized.
+If token exist then we will decode it.
+After that we will check if const user = await userModel.findById(decoded._id);
+set user to req.user and return next;
+
+Now I want to use this middleware in routes.
+router.get('/profile', authMiddleware.authUser, userController.getUserProfile);
+
+Whatever user we set in req.user in controller function that as a response will be sended to profile.
+
+Lets check how we test token using header-
+Go to postman
+http method : get
+http://localhost:4000/users/profile
+Go to Headers
+Key - Authorization
+Value - bearer "token value copy at the time of login"
+bearer eyJhbGciOiJIUzI1NiIsInR5cCI6I
+
+Need a middleware to interact with cookies i.e, npm i cookie-parser
+and require it in app.js file -
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+Now we can use it in auth middleware.
+
+Lets check how we test token using cookies-
+res.cookie('token', token) while generating token in login controller.
+go to postman click on send then open cookies then if u dont add header it will still allow login with profile
+if u add header then it will not allow login with profile.
+
+4. Logout API for seeing a user logout
+
+We will delete the token from cookies.
+We will create a collection of blacklisted tokens
+
+
+
+
+
+
+
+
+
+
 
 
 
