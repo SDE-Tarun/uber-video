@@ -1,151 +1,109 @@
-## Backend API Documentation (User)
+# Backend API Documentation
 
-## Endpoint: /users/register
+## `/users/register` Endpoint
 
-## HTTPMethod: POST
+### Description
 
-## Description:
-This endpoint allows users to register by providing their full name, email, and password. The server validates the input and returns an authentication token upon successful registration.
+Registers a new user by creating a user account with the provided information.
 
-## Request Body Format (JSON)
+### HTTP Method
 
-{
-  "fullname": {
-    "firstname": "John",
-    "lastname": "Doe"
-  },
-  "email": "john.doe@example.com",
-  "password": "securepassword123"
-}
+`POST`
 
-## Required Fields:
+### Request Body
 
-fullname.firstname (string, min 3 characters) - User's first name (mandatory)
+The request body should be in JSON format and include the following fields:
 
-fullname.lastname (string, min 3 characters) - User's last name (mandatory)
+- `fullname` (object):
+  - `firstname` (string, required): User's first name (minimum 3 characters).
+  - `lastname` (string, optional): User's last name (minimum 3 characters).
+- `email` (string, required): User's email address (must be a valid email).
+- `password` (string, required): User's password (minimum 6 characters).
 
-email (string, valid email format) - User's email (mandatory)
+### Example Response
 
-password (string, min 6 characters) - User's password (mandatory)
+- `user` (object):
+  - `fullname` (object).
+    - `firstname` (string): User's first name (minimum 3 characters).
+    - `lastname` (string): User's last name (minimum 3 characters).   
+  - `email` (string): User's email address (must be a valid email).
+  - `password` (string): User's password (minimum 6 characters).
+- `token` (String): JWT Token
 
-## Response Examples
+## `/users/login` Endpoint
 
-## Success Response (201 Created)
+### Description
 
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "user": {
-    "_id": "65d4f87a8c21a245c0a78b12",
-    "fullname": {
-      "firstname": "John",
-      "lastname": "Doe"
-    },
-    "email": "john.doe@example.com"
-  }
-}
+Authenticates a user using their email and password, returning a JWT token upon successful login.
 
-## Error Responses
+### HTTP Method
 
-400 Bad Request (Validation Errors)
+`POST`
 
-{
-  "errors": [
-    { "msg": "First name must be at least 3 characters long", "param": "fullname.firstname" },
-    { "msg": "Invalid Email", "param": "email" }
-  ]
-}
+### Endpoint
 
-## 500 Internal Server Error (Unexpected Issues)
+`/users/login`
 
-{
-  "error": "Something went wrong, please try again later."
-}
+### Request Body
 
-## How to Use
+The request body should be in JSON format and include the following fields:
 
-Send a POST request to /users/register with the required JSON data.
+- `email` (string, required): User's email address (must be a valid email).
+- `password` (string, required): User's password (minimum 6 characters).
 
-Ensure the request body meets validation criteria.
+### Example Response
 
-On success, receive an authentication token and user details.
+- `user` (object):
+  - `fullname` (object).
+    - `firstname` (string): User's first name (minimum 3 characters).
+    - `lastname` (string): User's last name (minimum 3 characters).   
+  - `email` (string): User's email address (must be a valid email).
+  - `password` (string): User's password (minimum 6 characters).
+- `token` (String): JWT Token
 
-On failure, handle validation errors accordingly.
+## `/users/profile` Endpoint
 
-## Notes
+### Description
 
-Passwords are hashed before storing in the database.
+Retrieves the profile information of the currently authenticated user.
 
-A JWT authentication token is returned upon successful registration.
+### HTTP Method
 
-Ensure Content-Type: application/json is set in request headers.
+`GET`
 
-## Endpoint: /users/login
+### Authentication
 
-## Description:
-This endpoint allows users to log in using their registered email and password. If authentication is successful, it returns a JWT token and user details.
+Requires a valid JWT token in the Authorization header:
+`Authorization: Bearer <token>`
 
-## HTTP Method: POST
+### Example Response
 
-## Request Body:
+- `user` (object):
+  - `fullname` (object).
+    - `firstname` (string): User's first name (minimum 3 characters).
+    - `lastname` (string): User's last name (minimum 3 characters).   
+  - `email` (string): User's email address (must be a valid email).
 
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
 
-## Required Fields:
 
-email (string) - Must be a valid email address.
+## `/users/logout` Endpoint
 
-password (string) - Must be at least 6 characters long.
+### Description
 
-## Responses:
+Logout the current user and blacklist the token provided in cookie or headers
 
-## Success Response (200 OK)
+### HTTP Method
 
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "user": {
-    "_id": "64b5f6c1a8c1a8e4f7c9a123",
-    "email": "user@example.com",
-    "fullname": {
-      "firstname": "John",
-      "lastname": "Doe"
-    }
-  }
-}
+`GET`
 
-## Validation Error (400 Bad Request)
+### Authentication
 
-{
-  "errors": [
-    {
-      "msg": "Invalid Email",
-      "param": "email",
-      "location": "body"
-    }
-  ]
-}
+Requires a valid JWT token in the Authorization header or cookie:
 
-## Authentication Error (404 Not Found)
-
-{
-  "message": "Invalid email or password"
-}
-
-## Usage Instructions:
-
-Make a POST request to /users/login with the required email and password in the request body.
-
-If login is successful, you will receive a JWT token. Store this token for authenticated requests.
-
-If login fails, check the error message for details.
-
-## Notes:
-
-Ensure the user is registered before attempting login.
-
-The password should be sent in plain text; it will be hashed and validated internally.
-
-Use the returned token for authorization in protected routes.
-
+- `user` (object):
+  - `fullname` (object).
+    - `firstname` (string): User's first name (minimum 3 characters).
+    - `lastname` (string): User's last name (minimum 3 characters).   
+  - `email` (string): User's email address (must be a valid email).
+  - `password` (string): User's password (minimum 6 characters).
+- `token` (String): JWT Token## `/captains/register` Endpoint
